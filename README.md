@@ -102,12 +102,12 @@ export default function MyForm() {
 
 | Type | Description | Mask | Regex |
 |------|-------------|------|-------|
-| `alpha` | Letters only | - | Including Turkish characters |
+| `alpha` | Letters only | - | Only letters (a-z, A-Z) |
 | `email` | Email address | - | Email format validation |
 | `password` | Password | - | Minimum 6 characters |
-| `phone` | Phone number | 9999999999 | 10-digit number |
+| `phone` | Phone number | (999) 999 99 99 | 10-digit number |
 | `tckn` | Turkish ID Number | 99999999999 | 11-digit number |
-| `text` | Plain text | - | - |
+| `text` | Plain text | - | Free text input |
 | `cardNumber` | Credit card number | 9999 9999 9999 9999 | 16-digit number |
 | `expiryDate` | Expiry date | 99/99 | MMYY format |
 | `cvv` | CVV code | 999 | 3-digit number |
