@@ -1,3 +1,5 @@
+import { useMemo, useCallback } from "react";
+
 const MASKS = {
   tckn: "99999999999",
   cardNumber: "9999 9999 9999 9999",
@@ -17,24 +19,30 @@ const REGEX = {
   url: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/i,
 };
 
-const FIELD_CONFIGS = {
-  tckn: { maxLength: 11, pattern: REGEX.tckn.source },
-  cardNumber: { maxLength: 19, pattern: REGEX.cardNumber.source },
-  expiryDate: { maxLength: 5, pattern: REGEX.expiryDate.source },
-  cvv: { maxLength: 3, pattern: REGEX.cvv.source },
-  phone: { maxLength: 15 },
+const NUMERIC_FIELD_CONFIGS = {
+  tckn: { maxLength: MASKS.tckn.length, pattern: REGEX.tckn.source },
+  cardNumber: {
+    maxLength: MASKS.cardNumber.length,
+    pattern: REGEX.cardNumber.source,
+  },
+  expiryDate: {
+    maxLength: MASKS.expiryDate.length,
+    pattern: REGEX.expiryDate.source,
+  },
+  cvv: { maxLength: MASKS.cvv.length, pattern: REGEX.cvv.source },
+  phone: { maxLength: MASKS.phone.length },
+} as const;
+
+const TEXT_FIELD_CONFIGS = {
+  email: { type: "email" as const, pattern: REGEX.email.source },
+  password: { type: "password" as const, minLength: 6 },
+  url: { type: "url" as const, pattern: REGEX.url.source },
 } as const;
 
 const COMMON_NUMERIC_PROPS = {
   type: "text" as const,
   inputMode: "numeric" as const,
 };
-
-const COMMON_TEXT_FIELDS = {
-  email: { type: "email" as const, pattern: REGEX.email.source },
-  password: { type: "password" as const, minLength: 6 },
-  url: { type: "url" as const, pattern: REGEX.url.source },
-} as const;
 
 const NAVIGATION_KEYS = [
   "Backspace",
@@ -56,8 +64,8 @@ const MASK_OPTIONS = {
 const INPUT_TYPE_TEXT = "text" as const;
 
 type FieldType =
-  | keyof typeof FIELD_CONFIGS
-  | keyof typeof COMMON_TEXT_FIELDS
+  | keyof typeof NUMERIC_FIELD_CONFIGS
+  | keyof typeof TEXT_FIELD_CONFIGS
   | "alpha"
   | "text";
 
@@ -66,8 +74,8 @@ interface FieldConfig {
   type: FieldType;
 }
 
-interface UseFormFieldsParams<T = Record<string, unknown>> {
-  fields: FieldConfig[];
+interface UseFormFieldsParams<T extends Record<string, any>> {
+  fields: Array<{ name: keyof T; type: FieldType }>;
   registerWithMask: (
     name: keyof T,
     mask: string,
@@ -92,16 +100,17 @@ const handleNumericKeyDown = (e: {
   }
 };
 
-const isNumericField = (type: FieldType): type is keyof typeof FIELD_CONFIGS =>
-  type in FIELD_CONFIGS;
+const isNumericField = (
+  type: FieldType
+): type is keyof typeof NUMERIC_FIELD_CONFIGS => type in NUMERIC_FIELD_CONFIGS;
 
 const isCommonTextField = (
   type: FieldType
-): type is keyof typeof COMMON_TEXT_FIELDS => type in COMMON_TEXT_FIELDS;
+): type is keyof typeof TEXT_FIELD_CONFIGS => type in TEXT_FIELD_CONFIGS;
 
-const getNumericFieldProps = (type: keyof typeof FIELD_CONFIGS) => ({
+const getNumericFieldProps = (type: keyof typeof NUMERIC_FIELD_CONFIGS) => ({
   ...COMMON_NUMERIC_PROPS,
-  ...FIELD_CONFIGS[type],
+  ...NUMERIC_FIELD_CONFIGS[type],
   onKeyDown: handleNumericKeyDown,
 });
 
@@ -110,48 +119,65 @@ const getShadcnMaskProps = (maskProps: Record<string, unknown>) => {
   return rest;
 };
 
-export function useFormFields<T = Record<string, unknown>>({
+/**
+ * Creates form field props with mask and validation
+ * @param fields - Array of field configurations
+ * @param registerWithMask - React Hook Form mask register function
+ * @param register - React Hook Form register function
+ * @param shadcn - Enable shadcn/ui compatibility mode
+ * @returns Object with field names as keys and props as values
+ */
+export function useFormFields<T extends Record<string, any>>({
   fields,
   registerWithMask,
   register,
   shadcn = false,
 }: UseFormFieldsParams<T>) {
-  const result: Record<string, Record<string, unknown>> = {};
+  const memoizedRegister = useCallback(register, [register]);
+  const memoizedRegisterWithMask = useCallback(registerWithMask, []);
 
-  fields.forEach(({ name, type }) => {
-    const baseRegisterProps = shadcn ? {} : register(name as keyof T);
+  const result = useMemo(() => {
+    const result: Record<string, Record<string, unknown>> = {};
 
-    if (isNumericField(type)) {
-      const maskProps = registerWithMask(
-        name as keyof T,
-        MASKS[type],
-        MASK_OPTIONS
-      );
-      const baseMaskProps = shadcn ? getShadcnMaskProps(maskProps) : maskProps;
+    fields.forEach(({ name, type }) => {
+      const baseRegisterProps = shadcn ? {} : memoizedRegister(name as keyof T);
 
-      result[name] = {
-        ...baseMaskProps,
-        ...getNumericFieldProps(type),
-      };
-    } else if (type === "alpha") {
-      result[name] = {
-        ...baseRegisterProps,
-        type: INPUT_TYPE_TEXT,
-        pattern: REGEX.alpha.source,
-        onKeyDown: handleAlphaKeyDown,
-      };
-    } else if (isCommonTextField(type)) {
-      result[name] = {
-        ...baseRegisterProps,
-        ...COMMON_TEXT_FIELDS[type],
-      };
-    } else {
-      result[name] = {
-        ...baseRegisterProps,
-        type: INPUT_TYPE_TEXT,
-      };
-    }
-  });
+      if (isNumericField(type)) {
+        const maskProps = memoizedRegisterWithMask(
+          name as keyof T,
+          MASKS[type],
+          MASK_OPTIONS
+        );
+        const baseMaskProps = shadcn
+          ? getShadcnMaskProps(maskProps)
+          : maskProps;
+
+        result[String(name)] = {
+          ...baseMaskProps,
+          ...getNumericFieldProps(type),
+        };
+      } else if (type === "alpha") {
+        result[String(name)] = {
+          ...baseRegisterProps,
+          type: INPUT_TYPE_TEXT,
+          pattern: REGEX.alpha.source,
+          onKeyDown: handleAlphaKeyDown,
+        };
+      } else if (isCommonTextField(type)) {
+        result[String(name)] = {
+          ...baseRegisterProps,
+          ...TEXT_FIELD_CONFIGS[type],
+        };
+      } else {
+        result[String(name)] = {
+          ...baseRegisterProps,
+          type: INPUT_TYPE_TEXT,
+        };
+      }
+    });
+
+    return result;
+  }, [fields, memoizedRegister, memoizedRegisterWithMask, shadcn]);
 
   return result;
 }

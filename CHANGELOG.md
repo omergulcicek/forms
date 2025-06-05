@@ -1,10 +1,23 @@
 # Changelog
 
+## [v1.1.2] - 2025-06-06
+
+### Fixed
+- TypeScript compilation error with keyof T indexing resolved
+- Consistent maxLength calculation using MASKS length for all numeric fields
+
+### Improved
+- Performance optimization in useCallback dependencies
+- Dynamic maxLength calculation instead of hardcoded values (tckn, cardNumber, expiryDate, cvv)
+
 ## [v1.1.1] - 2025-06-06
 
 ### Documentation
-- Improved usage documentation with better code examples
+- Enhanced README with Features section highlighting key capabilities
 - Added comprehensive shadcn/ui integration examples with FormField usage
+- Improved usage documentation with better code examples
+- Enhanced input types table with Keyboard Restriction column
+- Added shadcn/ui compatibility link and detailed implementation guide
 
 ## [v1.1.0] - 2025-06-06
 
