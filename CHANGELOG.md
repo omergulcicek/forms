@@ -1,5 +1,11 @@
 # Changelog
 
+## [v1.1.1] - 2025-06-06
+
+### Documentation
+- Improved usage documentation with better code examples
+- Added comprehensive shadcn/ui integration examples with FormField usage
+
 ## [v1.1.0] - 2025-06-06
 
 ### Added
