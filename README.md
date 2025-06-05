@@ -58,7 +58,7 @@ export default function MyForm() {
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="container flex flex-col gap-4 my-20 max-w-2xl">
+    <form onSubmit={form.handleSubmit(onSubmit)}>
       <label>
         <span>Card Number</span>
         <input {...cardNumber} placeholder="**** **** **** ****" />
@@ -122,18 +122,36 @@ export default function MyForm() {
 
 ## shadcn/ui Compatibility
 
-This package is designed to be fully compatible with shadcn/ui input component.
+This package is designed to be fully compatible with [shadcn/ui](https://ui.shadcn.com/docs/components/input?ref=omergulcicek/forms) input component.
 
 ```tsx
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+
+<Input
+  placeholder="Turkish ID Number"
+  {...tckn}
+/>
+
+// or
+
 <FormField
   control={form.control}
-  name={"tckn"}
+  name="tckn"
   render={({ field }) => (
     <FormItem>
       <FormLabel>TCKN</FormLabel>
       <FormControl>
         <Input
-          placeholder={"Turkish ID Number"}
+          placeholder="Turkish ID Number"
           {...field}
           {...tckn}
         />
