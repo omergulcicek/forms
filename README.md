@@ -1,8 +1,8 @@
 # @omergulcicek/forms
 
-React Hook Form ile gelişmiş input alanları için mask ve regex desteği sağlayan TypeScript hook paketi.
+Advanced input fields with mask and regex support for React Hook Form - TypeScript hook package.
 
-## Kurulum
+## Installation
 
 ```bash
 npm install @omergulcicek/forms
@@ -10,77 +10,110 @@ npm install @omergulcicek/forms
 
 ### Peer Dependencies
 
-Bu paket aşağıdaki paketlere ihtiyaç duyar:
+This package requires the following dependencies:
 
 ```bash
 npm install react react-hook-form use-mask-input
 ```
 
-## Kullanım
+## Usage
 
 ```tsx
-import { useForm } from "react-hook-form"
+import { useForm, FieldValues } from "react-hook-form"
 import { useHookFormMask } from "use-mask-input"
 import { useFormFields } from "@omergulcicek/forms"
 import { Input } from "@/components/ui/input" // shadcn/ui
+import { Button } from "@/components/ui/button" // shadcn/ui
 
 export default function MyForm() {
-  const { register, control } = useForm()
-  const registerWithMask = useHookFormMask(register)
+	const form = useForm()
+	const registerWithMask = useHookFormMask(form.register)
 
-  const { cardNumber, tckn, email, phone } = useFormFields({
-    fields: [
-      { name: "cardNumber", type: "cardNumber" },
-      { name: "tckn", type: "tckn" },
-      { name: "email", type: "email" },
-      { name: "phone", type: "phone" }
-    ],
-    registerWithMask
-  })
+  const { cardNumber, cvv, tckn, email, phone, password, url, alpha, expiryDate, details } = useFormFields({
+		fields: [
+			{ name: "cardNumber", type: "cardNumber" },
+			{ name: "cvv", type: "cvv" },
+			{ name: "tckn", type: "tckn" },
+			{ name: "email", type: "email" },
+			{ name: "phone", type: "phone" },
+			{ name: "password", type: "password" },
+			{ name: "url", type: "url" },
+			{ name: "alpha", type: "alpha" },
+			{ name: "expiryDate", type: "expiryDate" },
+			{ name: "details", type: "text" }
+		],
+		registerWithMask,
+		register: form.register
+	})
+
+	function onSubmit(data: FieldValues) {
+		console.log(data)
+	}
 
   return (
-    <form>
-      <Input 
-        {...register("cardNumber")} 
-        {...cardNumber} 
-        placeholder="Kart Numarası" 
-      />
-      <Input 
-        {...register("tckn")} 
-        {...tckn} 
-        placeholder="TC Kimlik No" 
-      />
-      <Input 
-        {...register("email")} 
-        {...email} 
-        placeholder="E-posta" 
-      />
-      <Input 
-        {...register("phone")} 
-        {...phone} 
-        placeholder="Telefon" 
-      />
-    </form>
+    <form onSubmit={form.handleSubmit(onSubmit)} className="container flex flex-col gap-4 my-20 max-w-2xl">
+			<label>
+				<span>Card Number</span>
+				<Input {...cardNumber} placeholder="**** **** **** ****" />
+			</label>
+			<label>
+				<span>Expiry Date</span>
+				<Input {...expiryDate} placeholder="MM/YY" />
+			</label>
+			<label>
+				<span>CVV</span>
+				<Input {...cvv} placeholder="CVV" />
+			</label>
+			<label>
+				<span>Turkish ID Number</span>
+				<Input {...tckn} placeholder="Turkish ID Number" />
+			</label>
+			<label>
+				<span>Email</span>
+				<Input {...email} placeholder="Email" />
+			</label>
+			<label>
+				<span>Phone</span>
+				<Input {...phone} placeholder="Phone" />
+			</label>
+			<label>
+				<span>Password</span>
+				<Input {...password} placeholder="Password" />
+			</label>
+			<label>
+				<span>Website</span>
+				<Input {...url} placeholder="https://example.com" />
+			</label>
+			<label>
+				<span>Name (Letters Only)</span>
+				<Input {...alpha} placeholder="Full Name" />
+			</label>
+			<label>
+				<span>Details</span>
+				<Input {...details} placeholder="Description" />
+			</label>
+			<Button type="submit">Submit</Button>
+		</form>
   )
 }
 ```
 
-## Desteklenen Input Tipleri
+## Supported Input Types
 
-| Tip | Açıklama | Mask | Regex |
-|-----|----------|------|-------|
-| `alpha` | Sadece harfler | - | Türkçe karakterler dahil |
-| `email` | E-posta | - | E-posta formatı |
-| `password` | Şifre | - | Min 6 karakter |
-| `phone` | Telefon | 9999999999 | 10 haneli numara |
-| `tckn` | TC Kimlik No | 99999999999 | 11 haneli numara |
-| `text` | Normal metin | - | - |
-| `cardNumber` | Kart numarası | 9999 9999 9999 9999 | 16 haneli numara |
-| `expiryDate` | Son kullanma | 99/99 | MMYY formatı |
-| `cvv` | CVV kodu | 999 | 3 haneli numara |
-| `url` | Web adresi | - | HTTP/HTTPS URL |
+| Type | Description | Mask | Regex |
+|------|-------------|------|-------|
+| `alpha` | Letters only | - | Including Turkish characters |
+| `email` | Email address | - | Email format validation |
+| `password` | Password | - | Minimum 6 characters |
+| `phone` | Phone number | 9999999999 | 10-digit number |
+| `tckn` | Turkish ID Number | 99999999999 | 11-digit number |
+| `text` | Plain text | - | - |
+| `cardNumber` | Credit card number | 9999 9999 9999 9999 | 16-digit number |
+| `expiryDate` | Expiry date | 99/99 | MMYY format |
+| `cvv` | CVV code | 999 | 3-digit number |
+| `url` | Web address | - | HTTP/HTTPS URL |
 
-## TypeScript Desteği
+## TypeScript Support
 
 ```tsx
 import { FieldType, UseFormFieldsProps } from "@omergulcicek/forms"
@@ -90,10 +123,10 @@ const fields: { name: string; type: FieldType }[] = [
 ]
 ```
 
-## shadcn/ui Uyumluluğu
+## shadcn/ui Compatibility
 
-Bu paket shadcn/ui Input bileşeni ile tam uyumlu olarak tasarlanmıştır.
+This package is designed to be fully compatible with shadcn/ui Input component.
 
-## Lisans
+## License
 
 MIT
