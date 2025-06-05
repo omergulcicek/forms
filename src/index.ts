@@ -126,7 +126,9 @@ export function useFormFields<T extends Record<string, any>>({
   register,
 }: UseFormFieldsParams<T>) {
   const memoizedRegister = useCallback(register, [register]);
-  const memoizedRegisterWithMask = useCallback(registerWithMask, [register]);
+  const memoizedRegisterWithMask = useCallback(registerWithMask, [
+    registerWithMask,
+  ]);
 
   const result = useMemo(() => {
     const result: Record<string, Record<string, unknown>> = {};
