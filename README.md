@@ -21,9 +21,11 @@ npm install react react-hook-form use-mask-input
 ```tsx
 import { useForm, FieldValues } from "react-hook-form"
 import { useHookFormMask } from "use-mask-input"
-import { useFormFields } from "@omergulcicek/forms"
+
 import { Input } from "@/components/ui/input" // shadcn/ui
 import { Button } from "@/components/ui/button" // shadcn/ui
+
+import { useFormFields } from "@omergulcicek/forms"
 
 export default function MyForm() {
 	const form = useForm()
@@ -112,16 +114,6 @@ export default function MyForm() {
 | `expiryDate` | Expiry date | 99/99 | MMYY format |
 | `cvv` | CVV code | 999 | 3-digit number |
 | `url` | Web address | - | HTTP/HTTPS URL |
-
-## TypeScript Support
-
-```tsx
-import { FieldType, UseFormFieldsProps } from "@omergulcicek/forms"
-
-const fields: { name: string; type: FieldType }[] = [
-  { name: "email", type: "email" }
-]
-```
 
 ## shadcn/ui Compatibility
 
