@@ -125,6 +125,19 @@ export default function MyForm() {
 This package is designed to be fully compatible with [shadcn/ui](https://ui.shadcn.com/docs/components/input?ref=omergulcicek/forms) input component.
 
 ```tsx
+import { Input } from "@/components/ui/input"
+
+const { alpha } = useFormFields<FormData>({
+  fields: [{ name: "alpha", type: "alpha" }],
+  registerWithMask,
+  register: form.register
+})
+
+<Input {...alpha} />
+```
+
+
+```tsx
 import {
   Form,
   FormControl,
@@ -136,24 +149,23 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 
-<Input
-  placeholder="Turkish ID Number"
-  {...tckn}
-/>
-
-// or
+const { alpha } = useFormFields<FormData>({
+  fields: [{ name: "alpha", type: "alpha" }],
+  registerWithMask,
+  register: form.register,
+  shadcn: true // Enable shadcn/ui compatibility (default=false)
+})
 
 <FormField
   control={form.control}
-  name="tckn"
+  name="alpha"
   render={({ field }) => (
     <FormItem>
-      <FormLabel>TCKN</FormLabel>
+      <FormLabel>Your name</FormLabel>
       <FormControl>
         <Input
-          placeholder="Turkish ID Number"
           {...field}
-          {...tckn}
+          {...alpha}
         />
       </FormControl>
       <FormMessage />
