@@ -1,5 +1,21 @@
 # Changelog
 
+## [v1.1.4] - 2025-06-06
+
+### Fixed
+- Mask functionality now works correctly in all scenarios
+
+### Removed
+- `shadcn` parameter from useFormFields hook (no longer needed)
+- `getShadcnMaskProps` internal helper function
+
+### Changed
+- Simplified API - useFormFields now works consistently across all UI libraries
+
+### Documentation
+- Updated README to remove shadcn: true usage examples
+- Simplified shadcn/ui integration examples
+
 ## [v1.1.3] - 2025-06-06
 
 ### Added

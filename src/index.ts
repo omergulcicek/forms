@@ -82,7 +82,6 @@ interface UseFormFieldsParams<T extends Record<string, any>> {
     options?: Record<string, unknown>
   ) => Record<string, unknown>;
   register: (name: keyof T) => Record<string, unknown>;
-  shadcn?: boolean;
 }
 
 const handleAlphaKeyDown = (e: { key: string; preventDefault: () => void }) => {
@@ -114,33 +113,26 @@ const getNumericFieldProps = (type: keyof typeof NUMERIC_FIELD_CONFIGS) => ({
   onKeyDown: handleNumericKeyDown,
 });
 
-const getShadcnMaskProps = (maskProps: Record<string, unknown>) => {
-  const { onChange, onBlur, name, ref, ...rest } = maskProps;
-  return rest;
-};
-
 /**
  * Creates form field props with mask and validation
  * @param fields - Array of field configurations
  * @param registerWithMask - React Hook Form mask register function
  * @param register - React Hook Form register function
- * @param shadcn - Enable shadcn/ui compatibility mode
  * @returns Object with field names as keys and props as values
  */
 export function useFormFields<T extends Record<string, any>>({
   fields,
   registerWithMask,
   register,
-  shadcn = false,
 }: UseFormFieldsParams<T>) {
   const memoizedRegister = useCallback(register, [register]);
-  const memoizedRegisterWithMask = useCallback(registerWithMask, []);
+  const memoizedRegisterWithMask = useCallback(registerWithMask, [register]);
 
   const result = useMemo(() => {
     const result: Record<string, Record<string, unknown>> = {};
 
     fields.forEach(({ name, type }) => {
-      const baseRegisterProps = shadcn ? {} : memoizedRegister(name as keyof T);
+      const baseRegisterProps = memoizedRegister(name as keyof T);
 
       if (isNumericField(type)) {
         const maskProps = memoizedRegisterWithMask(
@@ -148,12 +140,9 @@ export function useFormFields<T extends Record<string, any>>({
           MASKS[type],
           MASK_OPTIONS
         );
-        const baseMaskProps = shadcn
-          ? getShadcnMaskProps(maskProps)
-          : maskProps;
 
         result[String(name)] = {
-          ...baseMaskProps,
+          ...maskProps,
           ...getNumericFieldProps(type),
         };
       } else if (type === "alpha") {
@@ -177,7 +166,7 @@ export function useFormFields<T extends Record<string, any>>({
     });
 
     return result;
-  }, [fields, memoizedRegister, memoizedRegisterWithMask, shadcn]);
+  }, [fields, memoizedRegister, memoizedRegisterWithMask]);
 
   return result;
 }
