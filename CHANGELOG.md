@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.1.3] - 2025-06-06
+
+### Added
+- MIT License file
+
+### Documentation
+- Minor improvements to README code previews
+
 ## [v1.1.2] - 2025-06-06
 
 ### Fixed
