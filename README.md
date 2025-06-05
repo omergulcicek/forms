@@ -124,6 +124,26 @@ export default function MyForm() {
 
 This package is designed to be fully compatible with shadcn/ui input component.
 
+```tsx
+<FormField
+  control={form.control}
+  name={"tckn"}
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>TCKN</FormLabel>
+      <FormControl>
+        <Input
+          placeholder={"Turkish ID Number"}
+          {...field}
+          {...tckn}
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+```
+
 ## License
 
 MIT
