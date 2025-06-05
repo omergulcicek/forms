@@ -16,14 +16,19 @@ This package requires the following dependencies:
 npm install react react-hook-form use-mask-input
 ```
 
+## Features
+
+✅ **Keyboard Input Validation**: Numeric fields only accept numbers  
+✅ **Smart Masking**: Automatic formatting for phone, card numbers, etc.  
+✅ **Pattern Validation**: Built-in regex validation  
+✅ **TypeScript Support**: Full type safety  
+✅ **shadcn/ui Compatible**: Works seamlessly with shadcn/ui components  
+
 ## Usage
 
 ```tsx
 import { useForm, FieldValues } from "react-hook-form"
 import { useHookFormMask } from "use-mask-input"
-
-import { Input } from "@/components/ui/input" // shadcn/ui
-import { Button } from "@/components/ui/button" // shadcn/ui
 
 import { useFormFields } from "@omergulcicek/forms"
 
@@ -56,45 +61,45 @@ export default function MyForm() {
     <form onSubmit={form.handleSubmit(onSubmit)} className="container flex flex-col gap-4 my-20 max-w-2xl">
       <label>
         <span>Card Number</span>
-        <Input {...cardNumber} placeholder="**** **** **** ****" />
+        <input {...cardNumber} placeholder="**** **** **** ****" />
       </label>
       <label>
         <span>Expiry Date</span>
-        <Input {...expiryDate} placeholder="MM/YY" />
+        <input {...expiryDate} placeholder="MM/YY" />
       </label>
       <label>
         <span>CVV</span>
-        <Input {...cvv} placeholder="CVV" />
+        <input {...cvv} placeholder="CVV" />
       </label>
       <label>
         <span>Turkish ID Number</span>
-        <Input {...tckn} placeholder="Turkish ID Number" />
+        <input {...tckn} placeholder="Turkish ID Number" />
       </label>
       <label>
         <span>Email</span>
-        <Input {...email} placeholder="Email" />
+        <input {...email} placeholder="Email" />
       </label>
       <label>
         <span>Phone</span>
-        <Input {...phone} placeholder="Phone" />
+        <input {...phone} placeholder="Phone" />
       </label>
       <label>
         <span>Password</span>
-        <Input {...password} placeholder="Password" />
+        <input {...password} placeholder="Password" />
       </label>
       <label>
         <span>Website</span>
-        <Input {...url} placeholder="https://example.com" />
+        <input {...url} placeholder="https://example.com" />
       </label>
       <label>
         <span>Name (Letters Only)</span>
-        <Input {...alpha} placeholder="Full Name" />
+        <input {...alpha} placeholder="Full Name" />
       </label>
       <label>
         <span>Details</span>
-        <Input {...details} placeholder="Description" />
+        <input {...details} placeholder="Description" />
       </label>
-      <Button type="submit">Submit</Button>
+      <button type="submit">Submit</button>
     </form>
   )
 }
@@ -102,22 +107,22 @@ export default function MyForm() {
 
 ## Supported Input Types
 
-| Type | Description | Mask | Regex |
-|------|-------------|------|-------|
-| `alpha` | Letters only (a-z, A-Z) | - | Free text input |
-| `email` | Email address | - | Email format validation |
-| `password` | Password | - | Minimum 6 characters |
-| `phone` | Phone number | (999) 999 99 99 | 10-digit number |
-| `tckn` | Turkish ID Number | 99999999999 | 11-digit number |
-| `text` | Plain text | - | Free text input |
-| `cardNumber` | Credit card number | 9999 9999 9999 9999 | 16-digit number |
-| `expiryDate` | Expiry date | 99/99 | MMYY format |
-| `cvv` | CVV code | 999 | 3-digit number |
-| `url` | Web address | - | HTTP/HTTPS URL |
+| Type | Description | Mask | Keyboard Restriction | Validation |
+|------|-------------|------|---------------------|------------|
+| `alpha` | Letters only | - | Letters + Turkish chars + Space | Regex pattern |
+| `email` | Email address | - | All chars | Email format |
+| `password` | Password | - | All chars | Min 6 chars |
+| `phone` | Phone number | (999) 999 99 99 | **Numbers only** | Mask validation |
+| `tckn` | Turkish ID Number | 99999999999 | **Numbers only** | 11-digit + Pattern |
+| `text` | Plain text | - | All chars | None |
+| `cardNumber` | Credit card | 9999 9999 9999 9999 | **Numbers only** | 16-digit + Pattern |
+| `expiryDate` | Expiry date | 99/99 | **Numbers only** | MM/YY format |
+| `cvv` | CVV code | 999 | **Numbers only** | 3-digit + Pattern |
+| `url` | Web address | - | All chars | HTTP/HTTPS URL |
 
 ## shadcn/ui Compatibility
 
-This package is designed to be fully compatible with shadcn/ui Input component.
+This package is designed to be fully compatible with shadcn/ui input component.
 
 ## License
 

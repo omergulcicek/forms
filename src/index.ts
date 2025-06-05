@@ -1,34 +1,10 @@
-type FieldType =
-  | "alpha"
-  | "email"
-  | "password"
-  | "phone"
-  | "tckn"
-  | "text"
-  | "cardNumber"
-  | "expiryDate"
-  | "cvv"
-  | "url";
-
-type UseFormFieldsProps = {
-  fields: { name: string; type: FieldType }[];
-  registerWithMask: (
-    name: string,
-    mask: string,
-    options?: Record<string, unknown>
-  ) => Record<string, unknown>;
-};
-
-type InputProps = Record<string, unknown>;
-type UseFormFieldsReturn = { [key: string]: InputProps };
-
 const MASKS = {
   tckn: "99999999999",
   cardNumber: "9999 9999 9999 9999",
   expiryDate: "99/99",
   cvv: "999",
   phone: "(999) 999 99 99",
-};
+} as const;
 
 const REGEX = {
   alpha: /^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]+$/,
@@ -41,103 +17,143 @@ const REGEX = {
   url: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/i,
 };
 
-function useFormFields({
+const FIELD_CONFIGS = {
+  tckn: { maxLength: 11, pattern: REGEX.tckn.source },
+  cardNumber: { maxLength: 19, pattern: REGEX.cardNumber.source },
+  expiryDate: { maxLength: 5, pattern: REGEX.expiryDate.source },
+  cvv: { maxLength: 3, pattern: REGEX.cvv.source },
+  phone: { maxLength: 15 },
+} as const;
+
+const COMMON_NUMERIC_PROPS = {
+  type: "text" as const,
+  inputMode: "numeric" as const,
+};
+
+const COMMON_TEXT_FIELDS = {
+  email: { type: "email" as const, pattern: REGEX.email.source },
+  password: { type: "password" as const, minLength: 6 },
+  url: { type: "url" as const, pattern: REGEX.url.source },
+} as const;
+
+const NAVIGATION_KEYS = [
+  "Backspace",
+  "Delete",
+  "Tab",
+  "ArrowLeft",
+  "ArrowRight",
+  "Home",
+  "End",
+];
+
+const MASK_OPTIONS = {
+  showMaskOnFocus: false,
+  showMaskOnHover: false,
+  autoUnmask: true,
+  placeholder: "",
+} as const;
+
+const INPUT_TYPE_TEXT = "text" as const;
+
+type FieldType =
+  | keyof typeof FIELD_CONFIGS
+  | keyof typeof COMMON_TEXT_FIELDS
+  | "alpha"
+  | "text";
+
+interface FieldConfig {
+  name: string;
+  type: FieldType;
+}
+
+interface UseFormFieldsParams<T = Record<string, unknown>> {
+  fields: FieldConfig[];
+  registerWithMask: (
+    name: keyof T,
+    mask: string,
+    options?: Record<string, unknown>
+  ) => Record<string, unknown>;
+  register: (name: keyof T) => Record<string, unknown>;
+  shadcn?: boolean;
+}
+
+const handleAlphaKeyDown = (e: { key: string; preventDefault: () => void }) => {
+  if (!REGEX.alpha.test(e.key) && !NAVIGATION_KEYS.includes(e.key)) {
+    e.preventDefault();
+  }
+};
+
+const handleNumericKeyDown = (e: {
+  key: string;
+  preventDefault: () => void;
+}) => {
+  if (!/\d/.test(e.key) && !NAVIGATION_KEYS.includes(e.key)) {
+    e.preventDefault();
+  }
+};
+
+const isNumericField = (type: FieldType): type is keyof typeof FIELD_CONFIGS =>
+  type in FIELD_CONFIGS;
+
+const isCommonTextField = (
+  type: FieldType
+): type is keyof typeof COMMON_TEXT_FIELDS => type in COMMON_TEXT_FIELDS;
+
+const getNumericFieldProps = (type: keyof typeof FIELD_CONFIGS) => ({
+  ...COMMON_NUMERIC_PROPS,
+  ...FIELD_CONFIGS[type],
+  onKeyDown: handleNumericKeyDown,
+});
+
+const getShadcnMaskProps = (maskProps: Record<string, unknown>) => {
+  const { onChange, onBlur, name, ref, ...rest } = maskProps;
+  return rest;
+};
+
+export function useFormFields<T = Record<string, unknown>>({
   fields,
   registerWithMask,
   register,
-}: {
-  fields: Array<{ name: string; type: string }>;
-  registerWithMask: (name: string, mask: string, options: object) => object;
-  register: (name: string) => object;
-}) {
-  const result: Record<string, object> = {};
+  shadcn = false,
+}: UseFormFieldsParams<T>) {
+  const result: Record<string, Record<string, unknown>> = {};
 
   fields.forEach(({ name, type }) => {
-    let inputProps = {};
+    const baseRegisterProps = shadcn ? {} : register(name as keyof T);
 
-    if (
-      type === "tckn" ||
-      type === "cardNumber" ||
-      type === "expiryDate" ||
-      type === "cvv" ||
-      type === "phone"
-    ) {
-      const maskProps = registerWithMask(name, MASKS[type], {
-        showMaskOnFocus: false,
-        showMaskOnHover: false,
-        autoUnmask: true,
-        placeholder: "",
-      });
+    if (isNumericField(type)) {
+      const maskProps = registerWithMask(
+        name as keyof T,
+        MASKS[type],
+        MASK_OPTIONS
+      );
+      const baseMaskProps = shadcn ? getShadcnMaskProps(maskProps) : maskProps;
 
-      if (type === "cardNumber") {
-        inputProps = {
-          ...maskProps,
-          maxLength: 19,
-          type: "text",
-          inputMode: "numeric",
-        };
-      } else if (type === "expiryDate") {
-        inputProps = {
-          ...maskProps,
-          maxLength: 5,
-          type: "text",
-          inputMode: "numeric",
-        };
-      } else if (type === "phone") {
-        inputProps = {
-          ...maskProps,
-          type: "text",
-          inputMode: "numeric",
-        };
-      } else {
-        inputProps = {
-          ...maskProps,
-          maxLength: MASKS[type].replace(/[^9]/g, "").length,
-          type: type === "tckn" ? "tel" : "text",
-          inputMode: "numeric",
-        };
-      }
-    } else if (type === "email") {
-      inputProps = {
-        ...register(name),
-        type: "email",
-        pattern: REGEX.email.source,
-      };
-    } else if (type === "password") {
-      inputProps = {
-        ...register(name),
-        type: "password",
-        minLength: 6,
-      };
-    } else if (type === "url") {
-      inputProps = {
-        ...register(name),
-        type: "url",
-        pattern: REGEX.url.source,
+      result[name] = {
+        ...baseMaskProps,
+        ...getNumericFieldProps(type),
       };
     } else if (type === "alpha") {
-      inputProps = {
-        ...register(name),
-        type: "text",
+      result[name] = {
+        ...baseRegisterProps,
+        type: INPUT_TYPE_TEXT,
         pattern: REGEX.alpha.source,
-        onKeyDown: (e: KeyboardEvent) => {
-          if (!REGEX.alpha.test(e.key)) {
-            e.preventDefault();
-          }
-        },
+        onKeyDown: handleAlphaKeyDown,
+      };
+    } else if (isCommonTextField(type)) {
+      result[name] = {
+        ...baseRegisterProps,
+        ...COMMON_TEXT_FIELDS[type],
       };
     } else {
-      inputProps = {
-        ...register(name),
-        type: "text",
+      result[name] = {
+        ...baseRegisterProps,
+        type: INPUT_TYPE_TEXT,
       };
     }
-
-    result[name] = inputProps;
   });
 
   return result;
 }
 
-export type { FieldType, UseFormFieldsProps, UseFormFieldsReturn };
-export { useFormFields };
+export type { FieldType };
