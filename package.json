@@ -1,0 +1,46 @@
+{
+  "name": "@omergulcicek/forms",
+  "version": "1.0.0",
+  "description": "Advanced input fields with mask and regex support for React Hook Form",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "react",
+    "react-hook-form",
+    "input",
+    "mask",
+    "input-mask",
+    "regex",
+    "form",
+    "form-validation",
+    "validation",
+    "typescript",
+    "masked-input",
+    "text-input"
+  ],
+  "author": "Ömer Gülçiçek",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-hook-form": "^7.0.0",
+    "use-mask-input": "^3.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/react": "^18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/omergulcicek/forms.git"
+  },
+  "homepage": "https://github.com/omergulcicek/forms#readme"
+}
