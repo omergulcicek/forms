@@ -104,7 +104,7 @@ export default function MyForm() {
 
 | Type | Description | Mask | Regex |
 |------|-------------|------|-------|
-| `alpha` | Letters only | - | Only letters (a-z, A-Z) |
+| `alpha` | Letters only (a-z, A-Z) | - | Free text input |
 | `email` | Email address | - | Email format validation |
 | `password` | Password | - | Minimum 6 characters |
 | `phone` | Phone number | (999) 999 99 99 | 10-digit number |
