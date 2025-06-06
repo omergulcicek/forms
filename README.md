@@ -67,7 +67,7 @@ export default function MyForm() {
       <input {...cvv} placeholder="***" />
       
       {/* Turkish */}
-      <input {...tckn} placeholder="12345678901" />
+      <input {...tckn} placeholder="12345678950" />
       <input {...phone} placeholder="(5xx) xxx xx xx" />
       
       {/* Contact */}
@@ -133,7 +133,7 @@ export default function ShadcnForm() {
       
       <div>
         <Label htmlFor="tckn">Turkish ID</Label>
-        <Input {...tckn} placeholder="12345678901" />
+        <Input {...tckn} placeholder="12345678950" />
       </div>
 
       <Button type="submit">Submit</Button>
