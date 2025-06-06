@@ -1,3 +1,6 @@
+// © 2025 Ömer Gülçiçek – MIT License
+// https://omergulcicek.com • https://github.com/omergulcicek
+
 import { useMemo, useCallback } from "react";
 
 const MASKS = {
