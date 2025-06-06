@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.1.5] - 2025-06-06
+
+### Fixed
+- Fixed memoizedRegisterWithMask dependency array to properly include registerWithMask
+
+### Documentation
+- Minor improvements to README examples
+
 ## [v1.1.4] - 2025-06-06
 
 ### Fixed
