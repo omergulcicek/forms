@@ -1,5 +1,12 @@
 # Changelog
 
+## [v1.1.6] - 2025-06-07
+
+### Documentation
+- Added live demo link to README (omergulcicek-forms.vercel.app)
+- Updated project description for better clarity
+- Enhanced README presentation with interactive demo section
+
 ## [v1.1.5] - 2025-06-06
 
 ### Fixed

@@ -1,7 +1,7 @@
 {
   "name": "@omergulcicek/forms",
-  "version": "1.1.5",
-  "description": "Advanced input fields with mask and regex support for React Hook Form",
+  "version": "1.1.6",
+  "description": "Smart masking and validation for React Hook Form with TypeScript support",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -43,7 +43,7 @@
     "type": "git",
     "url": "https://github.com/omergulcicek/forms.git"
   },
-  "homepage": "https://github.com/omergulcicek/forms#readme",
+  "homepage": "https://omergulcicek-forms.vercel.app/",
   "publishConfig": {
     "access": "public"
   }

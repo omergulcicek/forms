@@ -1,6 +1,12 @@
 # @omergulcicek/forms
 
-Advanced input fields with mask and regex support for React Hook Form - TypeScript hook package.
+Smart masking and validation for React Hook Form with TypeScript support.
+
+## 🚀 Live Demo
+
+Try the interactive demo: **[omergulcicek-forms.vercel.app](https://omergulcicek-forms.vercel.app/)**
+
+See all input types with real-time validation, masking, and shadcn/ui integration in action.
 
 ## Installation
 
