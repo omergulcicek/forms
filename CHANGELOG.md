@@ -1,5 +1,43 @@
 # Changelog
 
+## [v1.2.0] - 2025-06-11
+
+### Added
+- **Field Value Access**: Added `value` and `maskedValue` properties to all field objects
+  - `cardNumber.value` returns clean unmasked value (e.g., "1234567890123456")  
+  - `cardNumber.maskedValue` returns formatted masked value (e.g., "1234 5678 9012 3456")
+- Enhanced TypeScript support with proper field result typing
+
+### Changed
+- Updated React peer dependency to require 18.0.0 or higher
+- Improved hook API: `form` object is now passed directly instead of `register` function
+- Removed unnecessary memoization for better performance and simpler code
+
+### Breaking Changes
+- `register: form.register` parameter replaced with `form` object
+- Field objects now include `value` and `maskedValue` properties
+
+### Migration Guide
+```tsx
+// Before v1.2.0
+const { cardNumber } = useFormFields({
+  fields: [...],
+  registerWithMask,
+  register: form.register  // ❌ Old way
+})
+
+// v1.2.0+
+const { cardNumber } = useFormFields({
+  fields: [...],
+  registerWithMask,
+  form  // ✅ New way
+})
+
+// New value access
+console.log(cardNumber.value)      // "1234567890123456"
+console.log(cardNumber.maskedValue) // "1234 5678 9012 3456"
+```
+
 ## [v1.1.6] - 2025-06-07
 
 ### Documentation

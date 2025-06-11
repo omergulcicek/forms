@@ -27,6 +27,7 @@ npm install react react-hook-form use-mask-input
 ✅ **Keyboard Input Validation**: Numeric fields only accept numbers  
 ✅ **Smart Masking**: Automatic formatting for phone, card numbers, etc.  
 ✅ **Pattern Validation**: Built-in regex validation  
+✅ **Value Access**: Get both masked and unmasked field values  
 ✅ **TypeScript Support**: Full type safety  
 ✅ **shadcn/ui Compatible**: Works seamlessly with shadcn/ui components  
 
@@ -62,8 +63,12 @@ export default function MyForm() {
       { name: "details", type: "text" }
     ],
     registerWithMask,
-    register: form.register
+    form
   })
+
+  // Access field values
+  console.log(cardNumber.value)      // "1234567890123456" (unmasked)
+  console.log(cardNumber.maskedValue) // "1234 5678 9012 3456" (masked)
 
   return (
     <form onSubmit={form.handleSubmit(console.log)}>
@@ -89,6 +94,35 @@ export default function MyForm() {
     </form>
   )
 }
+```
+
+## 💡 Value Access
+
+Each field object provides both masked and unmasked values:
+
+```tsx
+const { cardNumber, phone } = useFormFields({
+  fields: [
+    { name: "cardNumber", type: "cardNumber" },
+    { name: "phone", type: "phone" }
+  ],
+  registerWithMask,
+  form
+})
+
+// Unmasked values (clean)
+console.log(cardNumber.value)  // "1234567890123456"
+console.log(phone.value)       // "5551234567"
+
+// Masked values (formatted)
+console.log(cardNumber.maskedValue)  // "1234 5678 9012 3456"
+console.log(phone.maskedValue)       // "(555) 123 45 67"
+
+// Use in JSX
+<div>
+  <span>Clean: {cardNumber.value}</span>
+  <span>Formatted: {cardNumber.maskedValue}</span>
+</div>
 ```
 
 ## 🎨 shadcn/ui Integration
@@ -117,7 +151,7 @@ export default function ShadcnForm() {
       { name: "tckn", type: "tckn" }
     ],
     registerWithMask,
-    register: form.register
+    form
   })
 
   return (
@@ -189,7 +223,7 @@ export default function AdvancedShadcnForm() {
       { name: "email", type: "email" }
     ],
     registerWithMask,
-    register: form.register
+    form
   })
 
   return (
