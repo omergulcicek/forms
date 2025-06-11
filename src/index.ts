@@ -1,8 +1,6 @@
 // © 2025 Ömer Gülçiçek – MIT License
 // https://omergulcicek.com • https://github.com/omergulcicek
 
-import { useMemo, useCallback } from "react";
-
 const MASKS = {
   tckn: "99999999999",
   cardNumber: "9999 9999 9999 9999",
@@ -38,7 +36,7 @@ const NUMERIC_FIELD_CONFIGS = {
 
 const TEXT_FIELD_CONFIGS = {
   email: { type: "email" as const, pattern: REGEX.email.source },
-  password: { type: "password" as const, minLength: 6 },
+  password: { type: "password" as const },
   url: { type: "url" as const, pattern: REGEX.url.source },
 } as const;
 
@@ -72,9 +70,10 @@ type FieldType =
   | "alpha"
   | "text";
 
-interface FieldConfig {
-  name: string;
-  type: FieldType;
+interface FieldResult {
+  value: string;
+  maskedValue: string;
+  [key: string]: any;
 }
 
 interface UseFormFieldsParams<T extends Record<string, any>> {
@@ -84,7 +83,10 @@ interface UseFormFieldsParams<T extends Record<string, any>> {
     mask: string,
     options?: Record<string, unknown>
   ) => Record<string, unknown>;
-  register: (name: keyof T) => Record<string, unknown>;
+  form: {
+    register: (name: keyof T) => Record<string, unknown>;
+    watch: (name?: keyof T) => any;
+  };
 }
 
 const handleAlphaKeyDown = (e: { key: string; preventDefault: () => void }) => {
@@ -120,58 +122,85 @@ const getNumericFieldProps = (type: keyof typeof NUMERIC_FIELD_CONFIGS) => ({
  * Creates form field props with mask and validation
  * @param fields - Array of field configurations
  * @param registerWithMask - React Hook Form mask register function
- * @param register - React Hook Form register function
+ * @param form - React Hook Form instance
  * @returns Object with field names as keys and props as values
  */
 export function useFormFields<T extends Record<string, any>>({
   fields,
   registerWithMask,
-  register,
-}: UseFormFieldsParams<T>) {
-  const memoizedRegister = useCallback(register, [register]);
-  const memoizedRegisterWithMask = useCallback(registerWithMask, [
-    registerWithMask,
-  ]);
+  form,
+}: UseFormFieldsParams<T>): Record<string, FieldResult> {
+  const result: Record<string, FieldResult> = {};
 
-  const result = useMemo(() => {
-    const result: Record<string, Record<string, unknown>> = {};
+  fields.forEach(({ name, type }) => {
+    const baseRegisterProps = form.register(name as keyof T);
+    const watchedValue = form.watch(name as keyof T) || "";
 
-    fields.forEach(({ name, type }) => {
-      const baseRegisterProps = memoizedRegister(name as keyof T);
-
+    const getCleanValue = (value: string) => {
       if (isNumericField(type)) {
-        const maskProps = memoizedRegisterWithMask(
-          name as keyof T,
-          MASKS[type],
-          MASK_OPTIONS
-        );
-
-        result[String(name)] = {
-          ...maskProps,
-          ...getNumericFieldProps(type),
-        };
-      } else if (type === "alpha") {
-        result[String(name)] = {
-          ...baseRegisterProps,
-          type: INPUT_TYPE_TEXT,
-          pattern: REGEX.alpha.source,
-          onKeyDown: handleAlphaKeyDown,
-        };
-      } else if (isCommonTextField(type)) {
-        result[String(name)] = {
-          ...baseRegisterProps,
-          ...TEXT_FIELD_CONFIGS[type],
-        };
-      } else {
-        result[String(name)] = {
-          ...baseRegisterProps,
-          type: INPUT_TYPE_TEXT,
-        };
+        return value.replace(/\D/g, "");
       }
-    });
+      return value;
+    };
 
-    return result;
-  }, [fields, memoizedRegister, memoizedRegisterWithMask]);
+    const getMaskedValue = (value: string): string => {
+      if (!isNumericField(type) || !MASKS[type]) return value;
+
+      const cleanValue = getCleanValue(value);
+      const mask = MASKS[type];
+      let valueIndex = 0;
+
+      return [...mask].reduce((acc, char) => {
+        if (valueIndex >= cleanValue.length) return acc;
+        if (char === "9") {
+          acc += cleanValue[valueIndex];
+          valueIndex++;
+        } else {
+          acc += char;
+        }
+        return acc;
+      }, "");
+    };
+
+    const baseResult = {
+      value: getCleanValue(watchedValue),
+      maskedValue: getMaskedValue(watchedValue),
+    };
+
+    if (isNumericField(type)) {
+      const maskProps = registerWithMask(
+        name as keyof T,
+        MASKS[type],
+        MASK_OPTIONS
+      );
+
+      result[String(name)] = {
+        ...maskProps,
+        ...getNumericFieldProps(type),
+        ...baseResult,
+      };
+    } else if (type === "alpha") {
+      result[String(name)] = {
+        ...baseRegisterProps,
+        type: INPUT_TYPE_TEXT,
+        pattern: REGEX.alpha.source,
+        onKeyDown: handleAlphaKeyDown,
+        ...baseResult,
+      };
+    } else if (isCommonTextField(type)) {
+      result[String(name)] = {
+        ...baseRegisterProps,
+        ...TEXT_FIELD_CONFIGS[type],
+        ...baseResult,
+      };
+    } else {
+      result[String(name)] = {
+        ...baseRegisterProps,
+        type: INPUT_TYPE_TEXT,
+        ...baseResult,
+      };
+    }
+  });
 
   return result;
 }
