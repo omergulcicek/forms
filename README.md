@@ -2,6 +2,12 @@
 
 Smart masking and validation for React Hook Form with TypeScript support.
 
+![npm](https://img.shields.io/npm/v/@omergulcicek/forms)
+![bundlephobia](https://img.shields.io/bundlephobia/minzip/@omergulcicek/forms)
+![types](https://img.shields.io/npm/types/@omergulcicek/forms)
+![license](https://img.shields.io/npm/l/@omergulcicek/forms)
+![npm downloads](https://img.shields.io/npm/dw/@omergulcicek/forms)
+
 ## 🚀 Live Demo
 
 Try the interactive demo: **[omergulcicek-forms.vercel.app](https://omergulcicek-forms.vercel.app/)**
