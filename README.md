@@ -30,12 +30,12 @@ npm install react react-hook-form use-mask-input
 
 ## Features
 
-✅ **Keyboard Input Validation**: Numeric fields only accept numbers  
-✅ **Smart Masking**: Automatic formatting for phone, card numbers, etc.  
-✅ **Pattern Validation**: Built-in regex validation  
-✅ **Value Access**: Get both masked and unmasked field values  
-✅ **TypeScript Support**: Full type safety  
-✅ **shadcn/ui Compatible**: Works seamlessly with shadcn/ui components  
+**Keyboard Input Validation**: Numeric fields only accept numbers  
+**Smart Masking**: Automatic formatting for phone, card numbers, etc.  
+**Pattern Validation**: Built-in regex validation  
+**Value Access**: Get both masked and unmasked field values  
+**TypeScript Support**: Full type safety  
+**shadcn/ui Compatible**: Works seamlessly with shadcn/ui components  
 
 ## Usage
 
@@ -190,6 +190,8 @@ export default function ShadcnForm() {
 
 ### With shadcn Form Components (Advanced)
 
+Use the basic example for quick setup, or go with the advanced version for full form control with validation, error handling, and accessibility via shadcn/ui form components.
+
 ```tsx
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -287,10 +289,15 @@ export default function AdvancedShadcnForm() {
 
 ### Key Benefits with shadcn/ui
 
-✅ **Perfect Integration**: Works seamlessly with Input, Label, and Form components  
-✅ **Automatic Styling**: Inherits shadcn's beautiful design system  
-✅ **Validation Support**: Compatible with Zod and form validation  
-✅ **Accessibility**: Maintains shadcn's accessibility features  
-✅ **TypeScript First**: Full type safety with shadcn components  
+**Perfect Integration**: Works seamlessly with Input, Label, and Form components  
+**Automatic Styling**: Inherits shadcn's beautiful design system  
+**Validation Support**: Compatible with Zod and form validation  
+**Accessibility**: Maintains shadcn's accessibility features  
+**TypeScript First**: Full type safety with shadcn components  
 
 > **Note**: All input types (cardNumber, phone, email, tckn, etc.) work perfectly with shadcn/ui components.
+
+### Contributors
+
+- [@omergulcicek](https://github.com/omergulcicek)
+
