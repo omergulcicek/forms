@@ -1,5 +1,10 @@
 # Changelog
 
+## [v1.2.1] - 2025-06-13
+
+### Fixed
+- Fix expiryDate regex pattern for better validation.
+
 ## [v1.2.0] - 2025-06-11
 
 ### Added
