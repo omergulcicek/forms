@@ -1,6 +1,6 @@
 # @omergulcicek/forms
 
-Smart masking and validation for React Hook Form with TypeScript support.
+A lightweight, type-safe masking and validation library for React Hook Form.
 
 ![npm](https://img.shields.io/npm/v/@omergulcicek/forms)
 ![bundlephobia](https://img.shields.io/bundlephobia/minzip/@omergulcicek/forms)
